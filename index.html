@@ -66,125 +66,6 @@
     <div class="outer">
       <section id="main">
   
-    <article id="post-windows程序设计" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2019/08/26/windows程序设计/" class="article-date">
-  <time datetime="2019-08-26T08:12:07.986Z" itemprop="datePublished">2019-08-26</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/桌面程序设计/">桌面程序设计</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/08/26/windows程序设计/">Windows程序设计</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h1 id="windows程序设计"><a href="#windows程序设计" class="headerlink" title="windows程序设计"></a>windows程序设计</h1><h2 id="一-Windows图形界面运行机制"><a href="#一-Windows图形界面运行机制" class="headerlink" title="一. Windows图形界面运行机制"></a>一. Windows图形界面运行机制</h2><p>消息</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 主消息循环:</span></span><br><span class="line">    <span class="keyword">while</span> (GetMessage(&amp;msg, <span class="literal">nullptr</span>, <span class="number">0</span>, <span class="number">0</span>))</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (!TranslateAccelerator(msg.hwnd, hAccelTable, &amp;msg))</span><br><span class="line">        &#123;</span><br><span class="line">            TranslateMessage(&amp;msg);</span><br><span class="line">            DispatchMessage(&amp;msg);<span class="comment">//将消息投递给系统</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-
-<p>消息由消息队列而来。 消息主要分为系统消息（鼠标， 键盘， 定时器）, 命令消息（菜单，工具栏， 对话框按钮）。</p>
-<p>消息的产生</p>
-<p>系统消息产生-&gt;消息队列-&gt;循环处理-&gt;返回系统-&gt;窗口过程函数</p>
-<ol>
-<li>例如：鼠标窗口定位</li>
-</ol>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//消息定义</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">tagMSG</span> &#123;</span></span><br><span class="line">    HWND        hwnd;<span class="comment">//窗口的确定</span></span><br><span class="line">    UINT        message;<span class="comment">//消息的编号unsigned int，使用宏定义,包括鼠标向上的定义等</span></span><br><span class="line">    WPARAM      wParam;</span><br><span class="line">    LPARAM      lParam;<span class="comment">//通常传送指针给它</span></span><br><span class="line">    <span class="comment">/*WPARAM，消息响应机制</span></span><br><span class="line"><span class="comment">	wParam和lParam 这两个是Win16系统遗留下来的产物，在Win16API中WndProc有两个参数：</span></span><br><span class="line"><span class="comment">	一个是WORD类型的16位整型变量；另一个是LONG类型的32位整型变量。因此根据匈牙利命名法，16位的变量就被命名为wParam, 32位的变量就被命名为lParam。</span></span><br><span class="line"><span class="comment">	到了Win32API中，原来的16位变量也被扩展为32位，因此此时wParam和lParam的大小完全相同。</span></span><br><span class="line"><span class="comment">	在Win32API的早期，为了保证和Win16API的代码可移植性MS定义了WPARAM和LPARAM两个宏。</span></span><br><span class="line"><span class="comment">	当时保留了w前缀的原因一方面是由于WPARAM宏也以W开头，还有也因为要提醒程序员注意到可移植性，当然到了现在Win16早已退出历史舞台，这个前缀也就约定俗成的沿用下来了。</span></span><br><span class="line"><span class="comment">	将长整型数转为指针，数据类型只是指定访问内存的方式，EDMI</span></span><br><span class="line"><span class="comment">	*/</span></span><br><span class="line">    DWORD       time;</span><br><span class="line">    POINT       pt;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> _MAC</span></span><br><span class="line">    DWORD       lPrivate;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">&#125; MSG, *PMSG, NEAR *NPMSG, FAR *LPMSG;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">wcex.lpfnWndProc    = WndProc;<span class="comment">//回调窗口过程函数</span></span><br><span class="line"></span><br><span class="line"><span class="function">LRESULT CALLBACK <span class="title">WndProc</span><span class="params">(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)</span><span class="comment">//与消息的结构体一一对应</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">switch</span> (message)</span><br><span class="line">    &#123;</span><br><span class="line">    <span class="keyword">case</span> WM_COMMAND:<span class="comment">//命令消息</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">int</span> wmId = LOWORD(wParam);</span><br><span class="line">            <span class="comment">// 分析菜单选择:</span></span><br><span class="line">            <span class="keyword">switch</span> (wmId)</span><br><span class="line">            &#123;</span><br><span class="line">            <span class="keyword">case</span> IDM_ABOUT:</span><br><span class="line">                DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> IDM_EXIT:</span><br><span class="line">                DestroyWindow(hWnd);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">default</span>:</span><br><span class="line">                <span class="keyword">return</span> DefWindowProc(hWnd, message, wParam, lParam);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">case</span> WM_PAINT:</span><br><span class="line">        &#123;</span><br><span class="line">            PAINTSTRUCT ps;</span><br><span class="line">            HDC hdc = BeginPaint(hWnd, &amp;ps);</span><br><span class="line">            <span class="comment">// <span class="doctag">TODO:</span> 在此处添加使用 hdc 的任何绘图代码...</span></span><br><span class="line">            EndPaint(hWnd, &amp;ps);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">case</span> WM_DESTROY:</span><br><span class="line">        PostQuitMessage(<span class="number">0</span>);<span class="comment">//向消息队列投递WM_QUIT消息，窗口寿命结束</span></span><br><span class="line">            <span class="comment">/*WM_CLOSE WM_DESTROY WM_QUIT三件套</span></span><br><span class="line"><span class="comment">             	WM_DESTROY 是关闭程序 </span></span><br><span class="line"><span class="comment">     			WM_CLOSE 是关闭窗口 </span></span><br><span class="line"><span class="comment">     			WM_QUIT 是关闭消息环</span></span><br><span class="line"><span class="comment">     			WM_CLOSE和WM_DESTROY同属窗口消息，WM_QUIT则不在窗口消息之列。三者先后执行顺序是WM_CLOSE、WM_DESTROY、WM_QUIT</span></span><br><span class="line"><span class="comment">            */</span></span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">default</span>:</span><br><span class="line">        <span class="keyword">return</span> DefWindowProc(hWnd, message, wParam, lParam);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<ol start="2">
-<li><p><font color="blue">WM_CLOSE, WM_DESTROY, WM_QUIT</font></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">WM_CLOSE:</span><br><span class="line">在系统菜单里选择了“关闭”或者点击了窗口右上角的“X”按钮，你的窗口过程就会收到WM_CLOSE。DefWindowProc对WM_CLOSE的处理是调用DestroyWindow。当然，你可以不让DefWindowProc处理，而是自己处理，例如询问用户是否保存更改等。如果用户选择“取消”，你忽略此消息，那么程序照常运行；如果用户确认要退出，你就调用DestroyWindow。</span><br><span class="line">WM_DESTROY:</span><br><span class="line">DestroyWindow完成窗口的清理工作，最后像窗口过程发送WM_DESTROY。对于WM_DESTROY，DefWindowProc不会处理。也就是说，你如果不处理这个消息，虽然你的窗口已经销毁，但进程并不会结束。一般处理WM_DESTROY时都是释放资源（例如申请的内存等），然后调用PostQuitMessage。</span><br><span class="line">WM_QUIT:</span><br><span class="line">PostQuitMessage会发送WM_QUIT给消息队列。注意，WM_QUIT永远不会到达窗口过程，因为GetMessage得到WM_QUIT后就会返回FALSE，从而结束消息循环，最后进程结束，程序退出。</span><br><span class="line"></span><br><span class="line">假设使用者执行HELLOWIN.exe，并且使用者最终单击了 Close按钮，或者假设用键盘或鼠标从系统菜单中选择了Close， DefWindowProc处理这一键盘或者鼠标输入，在检测到使用者选择了Close选项之后，它给窗口消息处理程序发送一条WM_SYSCOMMAND消息。WndProc将这个消息传给DefWindowProc。DefWindowProc给窗口消息处理程序发送一条WM_CLOSE消息来响应之。WndProc再次将它传给DefWindowProc。DestroyWindow呼叫DestroyWindow来响应这条WM_CLOSE消息。DestroyWindow导致Windows给窗口消息处理程序发送一条WM_DESTROY消息。WndProc再呼叫PostQuitMessage，将一条WM_QUIT消息放入消息队列中，以此来响应此消息。这个消息导致WinMain中的消息循环终止，然后程序结束。</span><br></pre></td></tr></table></figure>
-
-
-
-</li>
-</ol>
-<h2 id="二-GDI基本图形——图形设备接口"><a href="#二-GDI基本图形——图形设备接口" class="headerlink" title="二. GDI基本图形——图形设备接口"></a>二. GDI基本图形——图形设备接口</h2><ol>
-<li><p>问题：<font color="blue">Where, how,  what</font></p>
-<ol>
-<li><p>在哪里画 设备的获取（例如打印机）</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">HDC <span class="title">GetDC</span><span class="params">(HWND hwnd)</span></span></span><br><span class="line"><span class="function">HDC <span class="title">GetWindowDC</span><span class="params">(<span class="literal">NULL</span>)</span></span></span><br><span class="line"><span class="function"><span class="comment">//返回设备上下文句柄，可传参也可不传，传参后返回窗口客户区上下文</span></span></span><br><span class="line"><span class="function">Context</span></span><br><span class="line"><span class="function">SeverletContext</span></span><br></pre></td></tr></table></figure>
-
-
-
-</li>
-</ol>
-</li>
-</ol>
-<ol start="2">
-<li><p>用什么画 </p>
-<ol>
-<li><p>画笔（轮廓）</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//CreatPen</span></span><br><span class="line"><span class="function">HPEN <span class="title">CreatPen</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> fnPenStyle, <span class="comment">//pen style</span></span><br><span class="line">    <span class="keyword">int</span> nWidth,<span class="comment">//pen width</span></span><br><span class="line">    COLORRED crColor <span class="comment">//bursh</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-
-
-</li>
-</ol>
-</li>
-</ol>
-<pre><code>2. 画刷（填充）
-
-   <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//CreatSolidBrush</span></span><br><span class="line">CreatSolidBrush()</span><br></pre></td></tr></table></figure>
-
-3. 选择工具到设备
-
-   <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//SelectObject</span></span><br></pre></td></tr></table></figure></code></pre><ol start="3">
-<li><p>画什么 示例如下：</p>
-<ol>
-<li><p>矩形</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"> </span><br></pre></td></tr></table></figure>
-
-
-
-</li>
-</ol>
-</li>
-</ol>
-<pre><code>2. 椭圆
-
-   <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"> </span><br></pre></td></tr></table></figure>
-
-
-
-3. 直线
-
-   <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"> </span><br></pre></td></tr></table></figure></code></pre><h2 id="Windows消息处理"><a href="#Windows消息处理" class="headerlink" title="Windows消息处理"></a>Windows消息处理</h2>
-      
-    </div>
-    <footer class="article-footer">
-      
-        <a data-url="http://yoursite.com/2019/08/26/windows程序设计/" data-id="cjzs4j3pp0000vvkil3hb52tb" class="article-share-link" data-share="baidu" data-title="Windows程序设计">Share</a>
-      
-
-      
-        <a href="http://yoursite.com/2019/08/26/windows程序设计/#ds-thread" class="article-comment-link">Comments</a>
-      
-
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mfc/">mfc</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
     <article id="post-commention" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2019/08/26/commention/" class="article-date">
@@ -239,7 +120,7 @@
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://yoursite.com/2019/08/26/commention/" data-id="cjzs4g08v0002ieki55k0cz50" class="article-share-link" data-share="baidu" data-title="How to creat a hello qt demo">Share</a>
+        <a data-url="http://yoursite.com/2019/08/26/commention/" data-id="cjzs4lfn40000c4kisie3etuv" class="article-share-link" data-share="baidu" data-title="How to creat a hello qt demo">Share</a>
       
 
       
@@ -296,7 +177,7 @@
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://yoursite.com/2019/08/26/hello-world/" data-id="cjzs4g08q0000ieki6pn6rb80" class="article-share-link" data-share="baidu" data-title="Hello World">Share</a>
+        <a data-url="http://yoursite.com/2019/08/26/hello-world/" data-id="cjzs4lfn90002c4kiy0vpijxq" class="article-share-link" data-share="baidu" data-title="Hello World">Share</a>
       
 
       
@@ -322,7 +203,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Categories</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/qt/">qt</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/桌面程序设计/">桌面程序设计</a><span class="category-list-count">1</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/qt/">qt</a><span class="category-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -331,7 +212,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/">hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mfc/">mfc</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/qt/">qt</a><span class="tag-list-count">1</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/">hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/qt/">qt</a><span class="tag-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -340,7 +221,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/mfc/" style="font-size: 10px;">mfc</a> <a href="/tags/qt/" style="font-size: 10px;">qt</a>
+      <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/qt/" style="font-size: 10px;">qt</a>
     </div>
   </div>
 
@@ -349,7 +230,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">3</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">2</span></li></ul>
     </div>
   </div>
 
@@ -359,10 +240,6 @@
     <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
-        
-          <li>
-            <a href="/2019/08/26/windows程序设计/">Windows程序设计</a>
-          </li>
         
           <li>
             <a href="/2019/08/26/commention/">How to creat a hello qt demo</a>
