@@ -1,3 +1,9 @@
+---
+title: How to creat a hello qt demo
+tags: [qt]
+categories: [qt]
+---
+
 # How to creat a hello qt demo
 ## These are commentions about how to creat a hello qt demo
 ## Moudles
