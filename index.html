@@ -66,6 +66,142 @@
     <div class="outer">
       <section id="main">
   
+    <article id="post-编译原理-引论" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2019/08/26/编译原理-引论/" class="article-date">
+  <time datetime="2019-08-26T15:01:39.141Z" itemprop="datePublished">2019-08-26</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/编译原理/">编译原理</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/08/26/编译原理-引论/">编译原理-引论</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="引论"><a href="#引论" class="headerlink" title="引论"></a>引论</h1><ol>
+<li><p>编译器概述</p>
+<ol>
+<li><p>程序设计语言的发展：</p>
+<p>​    机器语言（直接执行）-&gt;汇编语言（经汇编程序转机器语言）-&gt;高级语言（1. 编译程序，     2. 解释执行）</p>
+</li>
+<li><p>语言处理程序</p>
+<ol>
+<li>翻译程序（器）：能完成从一种语言到另一种语言的保留语义的软件，这两种语言成为源语言和目标语言。编译器的是一种翻译器，特点是目标语言比源语言低级。</li>
+<li>解释程序：不产生目标程序，翻译后直接执行。边解释边执行。</li>
+</ol>
+</li>
+<li><p>有的语言即编译又执行，例如java。</p>
+</li>
+</ol>
+</li>
+<li><p>编译的各阶段</p>
+<p>在将英语翻译为中文时，主要步骤有：</p>
+<ol>
+<li>识别句中单词</li>
+<li>分析语法结构</li>
+<li>根据语义初步翻译</li>
+<li>优化修饰</li>
+<li>写出译文</li>
+</ol>
+<p>转换为编译过程后有：</p>
+<ol>
+<li><p>词法分析</p>
+<p>词法分析将字节流按编程语言的语法规则把它们组成词法<font color="blue">记号流</font>。</p>
+<p>原则：构词规则</p>
+<p>工具：有限自动机</p>
+</li>
+<li><p>语法分析</p>
+<p>简称分析，检查根据词法分析输出的记号流是否符合编程语言的语法规则，并根据这些规则体现的语言<font color="blue">结构（construct， 如函数、语句、表达式等）</font>的层次性，用各记号的第一元建成一种树形的中间表示（常用语法树）。</p>
+<p>原则：语法规则</p>
+<p>工具：语法分析器</p>
+</li>
+<li><p>语义分析</p>
+<p>根据语言定义检测程序各部分之间的语义一致性，保证程序各部分能够有意义的结合在一起。</p>
+<p>其中一个重要组成部分是<font color="red">类型检查</font>。</p>
+<p>原则：语义规则</p>
+<p>工具：属性文法</p>
+</li>
+<li><p>中间代码生成</p>
+<p>为源程序产生更低级的中间显示。中间显示需要具有两性质：</p>
+<pre><code>- 它易于产生
+- 易于翻译成目标程序</code></pre><p>主要采用三地址代码的中间表示形式</p>
+</li>
+<li><p>代码优化</p>
+</li>
+<li><p>代码生成</p>
+<p>​    将优化过的中间代码转换为目标代码。</p>
+</li>
+<li><p>符号表管理</p>
+<p>符号表是为每个变量名字保存一个记录的数据结构，记录的域是该名字的属性。地址、作用域、类型等。</p>
+<p>主要在语义分析及后续阶段使用，之前积累。</p>
+</li>
+<li><p>出错处理</p>
+<p>发现源程序中错误，把有关错误报告给用户。</p>
+<ul>
+<li>语法错误</li>
+<li>语义错误</li>
+</ul>
+</li>
+</ol>
+</li>
+<li><p>阶段的分组</p>
+<ol>
+<li><p><font color="blue">遍的定义</font>:从头到尾扫描源程序。</p>
+</li>
+<li><p>可移植性:</p>
+<ol>
+<li>前端:<ul>
+<li>与源语言无关，与目标机无关部分。</li>
+<li>词法、语法、语义与中间代码生成、与机器无关的代码优化。</li>
+</ul>
+</li>
+<li>后端:<ul>
+<li>与目标机有关</li>
+<li>与目标机有关代码优化、目标代码生成</li>
+</ul>
+</li>
+</ol>
+<p>好处：可取前端写后端，也可取后端写前端。前后分离可复用。</p>
+</li>
+</ol>
+</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://yoursite.com/2019/08/26/编译原理-引论/" data-id="cjzsj59qj0004w0kia8n4zz7i" class="article-share-link" data-share="baidu" data-title="编译原理-引论">Share</a>
+      
+
+      
+        <a href="http://yoursite.com/2019/08/26/编译原理-引论/#ds-thread" class="article-comment-link">Comments</a>
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/编译原理/">编译原理</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-commention" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2019/08/26/commention/" class="article-date">
@@ -120,7 +256,7 @@
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://yoursite.com/2019/08/26/commention/" data-id="cjzs4lfn40000c4kisie3etuv" class="article-share-link" data-share="baidu" data-title="How to creat a hello qt demo">Share</a>
+        <a data-url="http://yoursite.com/2019/08/26/commention/" data-id="cjzsj59q90000w0kiraemdodc" class="article-share-link" data-share="baidu" data-title="How to creat a hello qt demo">Share</a>
       
 
       
@@ -177,7 +313,7 @@
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://yoursite.com/2019/08/26/hello-world/" data-id="cjzs4lfn90002c4kiy0vpijxq" class="article-share-link" data-share="baidu" data-title="Hello World">Share</a>
+        <a data-url="http://yoursite.com/2019/08/26/hello-world/" data-id="cjzsj59qf0001w0ki0ike5p85" class="article-share-link" data-share="baidu" data-title="Hello World">Share</a>
       
 
       
@@ -203,7 +339,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Categories</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/qt/">qt</a><span class="category-list-count">1</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/qt/">qt</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/编译原理/">编译原理</a><span class="category-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -212,7 +348,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/">hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/qt/">qt</a><span class="tag-list-count">1</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/">hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/qt/">qt</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/编译原理/">编译原理</a><span class="tag-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -221,7 +357,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/qt/" style="font-size: 10px;">qt</a>
+      <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/qt/" style="font-size: 10px;">qt</a> <a href="/tags/编译原理/" style="font-size: 10px;">编译原理</a>
     </div>
   </div>
 
@@ -230,7 +366,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">2</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">3</span></li></ul>
     </div>
   </div>
 
@@ -240,6 +376,10 @@
     <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2019/08/26/编译原理-引论/">编译原理-引论</a>
+          </li>
         
           <li>
             <a href="/2019/08/26/commention/">How to creat a hello qt demo</a>
